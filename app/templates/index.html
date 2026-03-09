@@ -1,561 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Telco Churn Predictor</title>
-
-  <style>
-    :root{
-      --bg1:#0b1020;
-      --bg2:#0a2a3a;
-      --card:#0f172aee;
-      --stroke:#ffffff18;
-      --text:#eaf2ff;
-      --muted:#b7c5dd;
-      --accent:#7c3aed;
-      --accent2:#06b6d4;
-      --good:#22c55e;
-      --bad:#ef4444;
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 22px;
-    }
-
-    *{ box-sizing:border-box; }
+<meta charset="UTF-8">
+<title>Bank Churn Prediction</title>
+<style>
     body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      color:var(--text);
-      background:
-        radial-gradient(1000px 600px at 15% 15%, rgba(124,58,237,.35), transparent 60%),
-        radial-gradient(900px 550px at 85% 20%, rgba(6,182,212,.28), transparent 55%),
-        radial-gradient(900px 700px at 50% 100%, rgba(34,197,94,.18), transparent 55%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
+        font-family: Arial;
+        background:#f4f6f9;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
     }
-
-    .wrap{
-      width: min(1100px, 100%);
-      display:grid;
-      grid-template-columns: 1.05fr 1fr;
-      gap:18px;
+    .container{
+        background:white;
+        padding:30px;
+        border-radius:10px;
+        width:400px;
+        box-shadow:0 0 10px rgba(0,0,0,0.1);
     }
-
-    @media (max-width: 980px){
-      .wrap{ grid-template-columns: 1fr; }
-    }
-
-    .hero, .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      overflow:hidden;
-    }
-
-    .hero{
-      padding: 26px 26px 22px;
-      position:relative;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:8px 12px;
-      border: 1px solid var(--stroke);
-      border-radius: 999px;
-      color: var(--muted);
-      font-size: 13px;
-      background: rgba(255,255,255,.04);
-    }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 18px rgba(124,58,237,.55);
-    }
-
-    h1{
-      margin:14px 0 8px;
-      font-size: clamp(28px, 3.2vw, 40px);
-      line-height:1.12;
-      letter-spacing: -0.02em;
-    }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      line-height:1.55;
-      font-size: 15px;
-      max-width: 58ch;
-    }
-
-    .stats{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-    }
-    .stat{
-      border:1px solid var(--stroke);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(255,255,255,.03);
-    }
-    .stat b{ display:block; font-size: 18px; }
-    .stat span{ color:var(--muted); font-size: 12px; }
-
-    .card{
-      padding: 18px;
-    }
-
-    .cardTop{
-      display:flex;
-      align-items:flex-start;
-      justify-content: space-between;
-      gap:10px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--stroke);
-      margin-bottom: 14px;
-    }
-    .cardTop h2{
-      margin:0;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-    }
-    .cardTop p{
-      margin:6px 0 0;
-      color:var(--muted);
-      font-size: 13px;
-      line-height:1.5;
-    }
-
-    form{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 720px){
-      form{ grid-template-columns: 1fr; }
-    }
-
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    label{
-      font-size: 12px;
-      color: var(--muted);
+    h2{
+        text-align:center;
     }
     input, select{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--stroke);
-      background: rgba(15, 23, 42, .65);
-      color: var(--text);
-      outline:none;
-      transition: .2s ease;
-    }
-    input::placeholder{ color: rgba(183,197,221,.55); }
-    input:focus, select:focus{
-      border-color: rgba(124,58,237,.55);
-      box-shadow: 0 0 0 4px rgba(124,58,237,.18);
-    }
-
-    .full{ grid-column: 1 / -1; }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:flex-end;
-      margin-top: 6px;
+        width:100%;
+        padding:8px;
+        margin:6px 0 12px 0;
     }
     button{
-      border:none;
-      cursor:pointer;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 700;
-      letter-spacing: .01em;
-      transition: .2s ease;
-      color: white;
+        width:100%;
+        padding:10px;
+        background:#007bff;
+        color:white;
+        border:none;
+        border-radius:5px;
+        cursor:pointer;
     }
-    .btnPrimary{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 14px 30px rgba(124,58,237,.25);
+    button:hover{
+        background:#0056b3;
     }
-    .btnPrimary:hover{ transform: translateY(-1px); }
-    .btnGhost{
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--stroke);
-      color: var(--text);
-    }
-    .btnGhost:hover{ background: rgba(255,255,255,.09); }
-
-    .result{
-      margin-top: 14px;
-      border: 1px dashed var(--stroke);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
-      padding: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .pill{
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-    }
-    .pred{
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: .01em;
-    }
-    .pred.good{ color: var(--good); }
-    .pred.bad{ color: var(--bad); }
-
-    .smallNote{
-      margin-top: 10px;
-      color: rgba(183,197,221,.75);
-      font-size: 12px;
-      line-height:1.45;
-    }
-
-    .loader{
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.25);
-      border-top-color: white;
-      display:none;
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to{ transform: rotate(360deg);} }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="wrap">
 
-    <section class="hero">
-      <div class="badge"><span class="dot"></span> ML • Telco Churn Prediction</div>
-      <h1>Sweet-looking form ✨<br/>to predict customer churn</h1>
-      <p class="sub">
-        Enter customer details, hit <b>Predict</b>, and your Flask model will return
-        <b>Churn</b> or <b>Not Churn</b>.
-      </p>
+<div class="container">
+<h2>Bank Churn Prediction</h2>
 
-      <div class="stats">
-        <div class="stat">
-          <b>19</b>
-          <span>Input features</span>
-        </div>
-        <div class="stat">
-          <b>Flask</b>
-          <span>/predict endpoint</span>
-        </div>
-        <div class="stat">
-          <b>Joblib</b>
-          <span>Loaded model</span>
-        </div>
-      </div>
+<form id="churnForm">
 
-      <p class="smallNote">
-        ✅ Tip: run your Flask app on <b>http://127.0.0.1:5000</b>.  
-        This page assumes endpoint is <b>/predict</b>.
-      </p>
-    </section>
+<label>Credit Score</label>
+<input type="number" name="CreditScore" required>
 
-    <section class="card">
-      <div class="cardTop">
-        <div>
-          <h2>Customer Inputs</h2>
-          <p>Fill the fields then submit. The result will show here.</p>
-        </div>
-        <span class="pill" id="apiStatus">API: /predict</span>
-      </div>
+<label>Geography</label>
+<select name="Geography">
+<option value="France">France</option>
+<option value="Germany">Germany</option>
+<option value="Spain">Spain</option>
+</select>
 
-      <form id="predictForm" method="POST" action="/predict">
-        <!-- Basic -->
-        <div class="field">
-          <label for="gender">gender</label>
-          <select id="gender" name="gender" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
-        </div>
+<label>Gender</label>
+<select name="Gender">
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+</select>
 
-        <div class="field">
-          <label for="SeniorCitizen">SeniorCitizen</label>
-          <select id="SeniorCitizen" name="SeniorCitizen" required>
-            <option value="" disabled selected>Select…</option>
-            <option value="0">0 (No)</option>
-            <option value="1">1 (Yes)</option>
-          </select>
-        </div>
+<label>Age</label>
+<input type="number" name="Age" required>
 
-        <div class="field">
-          <label for="Partner">Partner</label>
-          <select id="Partner" name="Partner" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
+<label>Tenure</label>
+<input type="number" name="Tenure">
 
-        <div class="field">
-          <label for="Dependents">Dependents</label>
-          <select id="Dependents" name="Dependents" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
+<label>Balance</label>
+<input type="number" step="0.01" name="Balance">
 
-        <div class="field">
-          <label for="tenure">tenure (months)</label>
-          <input id="tenure" name="tenure" type="number" min="0" placeholder="e.g., 12" required />
-        </div>
+<label>Number Of Products</label>
+<input type="number" name="NumOfProducts">
 
-        <div class="field">
-          <label for="MonthlyCharges">MonthlyCharges</label>
-          <input id="MonthlyCharges" name="MonthlyCharges" type="number" step="0.01" min="0" placeholder="e.g., 79.90" required />
-        </div>
+<label>Has Credit Card</label>
+<select name="HasCrCard">
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
 
-        <div class="field">
-          <label for="TotalCharges">TotalCharges</label>
-          <input id="TotalCharges" name="TotalCharges" type="number" step="0.01" min="0" placeholder="e.g., 982.50" required />
-        </div>
+<label>Is Active Member</label>
+<select name="IsActiveMember">
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
 
-        <!-- Services -->
-        <div class="field">
-          <label for="PhoneService">PhoneService</label>
-          <select id="PhoneService" name="PhoneService" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
+<label>Estimated Salary</label>
+<input type="number" step="0.01" name="EstimatedSalary">
 
-        <div class="field">
-          <label for="MultipleLines">MultipleLines</label>
-          <select id="MultipleLines" name="MultipleLines" required>
-            <option value="" disabled selected>Select…</option>
-            <option>No</option>
-            <option>Yes</option>
-            <option>No phone service</option>
-          </select>
-        </div>
+<button type="submit">Predict Churn</button>
 
-        <div class="field">
-          <label for="InternetService">InternetService</label>
-          <select id="InternetService" name="InternetService" required>
-            <option value="" disabled selected>Select…</option>
-            <option>DSL</option>
-            <option>Fiber optic</option>
-            <option>No</option>
-          </select>
-        </div>
+</form>
 
-        <div class="field">
-          <label for="OnlineSecurity">OnlineSecurity</label>
-          <select id="OnlineSecurity" name="OnlineSecurity" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
+<p id="result"></p>
 
-        <div class="field">
-          <label for="OnlineBackup">OnlineBackup</label>
-          <select id="OnlineBackup" name="OnlineBackup" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
+</div>
 
-        <div class="field">
-          <label for="DeviceProtection">DeviceProtection</label>
-          <select id="DeviceProtection" name="DeviceProtection" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
+<script>
+document.getElementById("churnForm").addEventListener("submit", async function(e){
+    e.preventDefault();
 
-        <div class="field">
-          <label for="TechSupport">TechSupport</label>
-          <select id="TechSupport" name="TechSupport" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
 
-        <div class="field">
-          <label for="StreamingTV">StreamingTV</label>
-          <select id="StreamingTV" name="StreamingTV" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="StreamingMovies">StreamingMovies</label>
-          <select id="StreamingMovies" name="StreamingMovies" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>No internet service</option>
-          </select>
-        </div>
-
-        <!-- Contract & billing -->
-        <div class="field">
-          <label for="Contract">Contract</label>
-          <select id="Contract" name="Contract" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Month-to-month</option>
-            <option>One year</option>
-            <option>Two year</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="PaperlessBilling">PaperlessBilling</label>
-          <select id="PaperlessBilling" name="PaperlessBilling" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
-
-        <div class="field full">
-          <label for="PaymentMethod">PaymentMethod</label>
-          <select id="PaymentMethod" name="PaymentMethod" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Electronic check</option>
-            <option>Mailed check</option>
-            <option>Bank transfer (automatic)</option>
-            <option>Credit card (automatic)</option>
-          </select>
-        </div>
-
-        <div class="actions full">
-          <div class="loader" id="loader"></div>
-          <button class="btnGhost" type="button" id="fillDemo">Fill Demo</button>
-          <button class="btnPrimary" type="submit">Predict ✨</button>
-        </div>
-
-        <div class="result full" id="resultBox" style="display:none;">
-          <div>
-            <div class="pill">Prediction</div>
-            <div class="pred" id="predText">—</div>
-          </div>
-          <button class="btnGhost" type="button" id="clearResult">Clear</button>
-        </div>
-
-        <p class="smallNote full">
-          لو عندك مشكلة CORS أو بتفتح الصفحة من ملف مباشر، شغّلها من نفس Flask app (template) عشان
-          <b>/predict</b> يتنادى صح.
-        </p>
-      </form>
-    </section>
-
-  </div>
-
-  <script>
-    // Optional: submit via fetch to show result on the same page (prettier UX)
-    // This requires Flask /predict to accept POST and return plain text "Churn" or "Not Churn".
-    const form = document.getElementById("predictForm");
-    const loader = document.getElementById("loader");
-    const resultBox = document.getElementById("resultBox");
-    const predText = document.getElementById("predText");
-    const clearResult = document.getElementById("clearResult");
-    const fillDemo = document.getElementById("fillDemo");
-
-    function setResult(text){
-      resultBox.style.display = "flex";
-      predText.textContent = text;
-
-      predText.classList.remove("good","bad");
-      if (String(text).toLowerCase().includes("not")) predText.classList.add("good");
-      else predText.classList.add("bad");
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      loader.style.display = "inline-block";
-      resultBox.style.display = "none";
-
-      try{
-        const formData = new FormData(form);
-
-        // IMPORTANT: assumes same-origin endpoint /predict
-        const res = await fetch(form.action, {
-          method: "POST",
-          body: formData
-        });
-
-        const text = await res.text();
-        setResult(text.trim());
-      }catch(err){
-        setResult("Error calling /predict");
-        console.error(err);
-      }finally{
-        loader.style.display = "none";
-      }
+    const response = await fetch("/predict", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify(data)
     });
 
-    clearResult.addEventListener("click", () => {
-      resultBox.style.display = "none";
-      predText.textContent = "—";
-      predText.classList.remove("good","bad");
-    });
+    const result = await response.json();
+    document.getElementById("result").innerText = "Prediction: " + result.prediction;
+});
+</script>
 
-    fillDemo.addEventListener("click", () => {
-      // Fill with a realistic sample
-      document.getElementById("gender").value = "Male";
-      document.getElementById("SeniorCitizen").value = "0";
-      document.getElementById("Partner").value = "Yes";
-      document.getElementById("Dependents").value = "No";
-      document.getElementById("tenure").value = 12;
-      document.getElementById("PhoneService").value = "Yes";
-      document.getElementById("MultipleLines").value = "No";
-      document.getElementById("InternetService").value = "Fiber optic";
-      document.getElementById("OnlineSecurity").value = "No";
-      document.getElementById("OnlineBackup").value = "Yes";
-      document.getElementById("DeviceProtection").value = "No";
-      document.getElementById("TechSupport").value = "No";
-      document.getElementById("StreamingTV").value = "Yes";
-      document.getElementById("StreamingMovies").value = "Yes";
-      document.getElementById("Contract").value = "Month-to-month";
-      document.getElementById("PaperlessBilling").value = "Yes";
-      document.getElementById("PaymentMethod").value = "Electronic check";
-      document.getElementById("MonthlyCharges").value = 89.90;
-      document.getElementById("TotalCharges").value = 1080.25;
-    });
-  </script>
 </body>
 </html>
